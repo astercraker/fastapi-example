@@ -36,7 +36,7 @@ async def hello():
     return { "message": sys.version }
 
 
-@app.post("/accounts")
+@app.post("/accounts/")
 async def create_account(user: User, db: db_dependency):
     db_user = models.User(**user.dict())
     db.add(db_user)
