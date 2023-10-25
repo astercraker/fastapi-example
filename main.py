@@ -1,39 +1,30 @@
 import sys
 from fastapi import FastAPI
-# from dotenv import dotenv_values
-from config import Settings
-# imports models pydantic
 from fastapi import Depends
-from pydantic import BaseModel
-from typing import List, Annotated, Optional
+from schemas import User
+from typing import Annotated, Generator
 import models
 from database import engine, SessionLocal
 from sqlalchemy.orm import Session
 
-
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 
-class User(BaseModel):
-    id: int | None = None
-    cash: float
-    # issuers: List[str] | None = []
 
-    class Config:
-        orm_mode = True
-
-def get_db():
+def get_db() -> Generator:
     db = SessionLocal()
-    try: 
+    try:
         yield db
-    finally: 
+    finally:
         db.close()
+
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+
 @app.get("/")
 async def hello():
-    return { "message": sys.version }
+    return {"message": sys.version}
 
 
 @app.post("/accounts/")
